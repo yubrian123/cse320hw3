@@ -1,2 +1,2 @@
-# hw3-template
-This is template for the HW3
+# HW 3
+Do not cheat and good luck. Do not forget to tag your submission.
