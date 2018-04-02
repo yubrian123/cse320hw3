@@ -109,8 +109,8 @@ prompt:
         if (!is_printed) {
 	    fclose(fp);
             is_printed = 1;
-            filename = "wallets_info.dat";
-            fp = fopen(filename, "w");
+            //filename = "wallets_info.dat";
+            fp = fopen("wallets_info.dat", "w");
             print_wallets(fp, num_wallets, wallet);
 	    fclose(fp);
         }

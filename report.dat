@@ -32,3 +32,4 @@ I then ran print_help.o using hexedit and i found where the file said 55 48 89 e
 B8, between a E8 and E8. I changed that to bf because thats what the correct disassemble code suppose to look like.
 13) when checking for more memory leaks, i saw that every time i ran generate, print and then quit, i would get more memory leaks. I realized that the file i orginally open, the one the user passed it
 was not closed before opening the other file to write stuff in, the wallets_info.dat. Therefore i close the file before opening the new file and close the old file before exiting.
+14) When getting an error trying to free a string literal. I realized that filename was set to a string literal in the print part of the function. To fix this i deleted the line where we set filename = "wallets_info.dat" and did fopen("wallets_info.dat", "w") to completely avoid this issue
