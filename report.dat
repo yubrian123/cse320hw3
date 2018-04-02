@@ -1,0 +1,34 @@
+first thing i did was read through the code to see for any syntax errors
+1) first error i saw was include in line 4 was mispelled
+2) next error i saw was when prompting user for file, we used fscanf instead of scanf.
+this will throw an error cause scanf takes in prompts while fscanf reads through a file
+3) since the program should check whether or not the file exist, i included a if statement to make sure file is not null, else
+throw error, free filename and command and return.
+4) line 71, same error as my 2nd find, scanf instead of fscanf 
+fscanf("%s", command) -> scanf("%s", command)
+5) next error i saw was pid was not checked for being less then 0,
+this might create a zombie process so i added a if else statement to print an error if pid < 0 and put the parent process to wait.
+6) Next error i found was when i tried to compile the file it gave me errors for implicit declaration of
+strcmp, fork, wait, and sleep. Therefore i added the string.h sys/wait.h and unistd.h.
+7) the next error i found when i tried to compile was execvp required a non-null arguement
+to fix this error i simply created a char* args[] and made it NULL. I did this because i know the 2nd arguement
+for the function execvp requires non-null arguements and for part2 of our hw I ran to a similar error and i solved it by
+created the char* args[] and passed it in as the 2nd arguement.
+8) next error i encountered was when i tried to run the program and tried to use the generate command.
+it gave me a segmentataion fault, therefore i knew something was wrong with the generate function.
+The generate_wallets function does not has a parameter that tells them function how many wallets to produce. I fixed this
+by added an addition parameter, numWallets and only looping for that many wallets. I also changed where we call generate wallets and added that parameter
+9) I then ran the program again, when i generated and printed the wallets, i got negative for amount of momeny inside some wallets.
+I then went to check the function print_wallets and found they printed the key twice instead of wallet[i].money. I changed the corrsponding money: &d to wallet[i].money
+10) after changing that, i realized some of the money in the wallet was still negative and i realized that the gen_money function producted a unit32_t not an int, so i changed 
+the wallet structure to unit32_t money and changed in the print_wallet function "money: %d" to "money: %u" which enough each wallet doesnt have a negative number as well as
+making sure the structure of the wallet is consistent/ whats being generated
+11) when i ran valgrind, i found out i had some memory leaks and realized i didnt free command or filename before quitting so i added the free statements. It also said that the file
+was open but never closed so i did fclose everywhere i returned or exited the program. I also had 1 more block of memory lost, so i checked and i saw i forgot to free wallet. so i added a free stateement
+for wallet everywhere i returned/exited the program
+12) I noticed that quit was never given an explaination when user types in help when running wallet_stat. so i looked into print_help.o and i did this by downloading
+hexedit and i took a look at  the assembly code for print_help.o by using objdump. I noticed that that line 22 did not say %edi which was what the assmebly code suppose to look like.
+I then ran print_help.o using hexedit and i found where the file said 55 48 89 e5 and knew thats where i start scanning through for the error. Everything was correct until i came accross a 
+B8, between a E8 and E8. I changed that to bf because thats what the correct disassemble code suppose to look like.
+13) when checking for more memory leaks, i saw that every time i ran generate, print and then quit, i would get more memory leaks. I realized that the file i orginally open, the one the user passed it
+was not closed before opening the other file to write stuff in, the wallets_info.dat. Therefore i close the file before opening the new file and close the old file before exiting.

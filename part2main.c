@@ -4,13 +4,14 @@
 #include <stdint.h>
 #include <string.h>
 #include <errno.h>
+#include<sys/wait.h>
 
 int main(int argc, char** argv)
 {
   if(*(argv + 1) == NULL)
   {
-    printf("File Not Found. \n");
-    return 1;
+    perror("File Not Found. \n");
+    return errno;
   }
 
   char* filename;
@@ -23,8 +24,9 @@ int main(int argc, char** argv)
   fp = fopen(filename, "r");
   if(fp == NULL)
   {
-    printf("File Not Found. \n");
-    return 1;
+    perror("File Not Found. \n");
+    fclose(fp);
+    return errno;
   }
 
   prompt:
@@ -38,6 +40,16 @@ int main(int argc, char** argv)
         execve("./solver", args, NULL);
         exit(0);
       }
+      else if(pid < 0)
+      {
+	fclose(fp);
+	perror("Fork Failed");
+	return errno;
+      }
+      else
+      {
+	wait(NULL);
+      }
       sleep(1);
       goto prompt;
     }
@@ -48,6 +60,16 @@ int main(int argc, char** argv)
         char* args[] = {"./trace", filename, NULL};
         execve("./trace", args, NULL);
         exit(0);
+      }
+      else if(pid < 0)
+      {
+	fclose(fp);
+	perror("Fork Failed");
+	return errno;
+      }
+      else
+      {
+	wait(NULL);
       }
       sleep(1);
       goto prompt;
@@ -61,19 +83,30 @@ int main(int argc, char** argv)
         execve("./fib", args, NULL);
         exit(0);
       }
+      else if(pid < 0)
+      {
+	fclose(fp);
+	perror("Fork Failed");
+	return errno;
+      }
+      else
+      {
+	wait(NULL);
+      }
       sleep(1);
       goto prompt;
     }
     else if(strcmp(command, "change") == 0)
     {
+      fclose(fp);
       printf("Enter New File: \n");
       scanf("%s", filename);
       fp = fopen(filename, "r");
       if(fp == NULL)
       {
-        printf("File Not Found. \n");
+        perror("File Not Found. \n");
         fclose(fp);
-        return(0);
+        return errno;
       }
       goto prompt;
     }
@@ -84,8 +117,8 @@ int main(int argc, char** argv)
     }
     else
     {
-      printf("Unknown Command");
-      return 0;
+      perror("Unknown Command");
+      goto prompt;
     }
 }
 
