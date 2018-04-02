@@ -29,7 +29,7 @@ int findTrace(int n, int matrix[][n])
 {
   int sum = 0;
   int i;
-  for(int i = 0; i < n; i++)
+  for(i = 0; i < n; i++)
   {
     sum += matrix[i][i];
   }
